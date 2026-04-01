@@ -11,6 +11,6 @@ COPY . .
 RUN npm run build
 RUN mkdir -p /app/public/uploads
 
-EXPOSE 1337
+EXPOSE 8080
 
 CMD ["npm", "run", "start"]
