@@ -1,4 +1,4 @@
 {
-  "build_command": "npm install",
-  "start_command": "npm run develop"
+  "build_command": "npm install && npm run build",
+  "start_command": "npm run start"
 }

@@ -22,6 +22,7 @@ export default [
         'http://localhost:3000',
         'http://localhost:3001',
         'https://win31.zeabur.app',
+        'https://win31-frontend.zeabur.app',
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
