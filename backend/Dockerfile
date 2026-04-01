@@ -1,11 +1,11 @@
-FROM node:20-alpine
+FROM node:20-slim
 
-RUN apk add --no-cache build-base python3
+RUN apt-get update && apt-get install -y build-essential python3 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 RUN npm run build
