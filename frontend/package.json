@@ -1,0 +1,15 @@
+{
+  "name": "frontend",
+  "private": true,
+  "workspaces": [
+    "product",
+    "storybook"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=product",
+    "build": "npm run build --workspace=product",
+    "start": "npm run start --workspace=product",
+    "storybook": "npm run storybook --workspace=storybook",
+    "build-storybook": "npm run build-storybook --workspace=storybook"
+  }
+}

@@ -1,0 +1,42 @@
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #171717;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  font-family: "Inter", sans-serif;
+}
+
+.social-button:hover {
+  opacity: 0.9;
+}
+
+.social-button:focus-visible {
+  outline: 2px solid #0070f3;
+  outline-offset: 2px;
+}
+
+.social-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.social-button__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.social-button__label {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: normal;
+  white-space: nowrap;
+}

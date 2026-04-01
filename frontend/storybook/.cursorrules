@@ -1,0 +1,215 @@
+# Storybook Component Development Rules
+
+此規範適用於 `storybook/` 目錄下的共用元件開發。
+
+---
+
+## 核心原則
+
+開發任何共用元件時，必須遵守 Design Tokens 的層級架構，確保設計系統的一致性與可維護性。
+
+---
+
+## 1. Design Tokens 層級架構
+
+採用 Google Material Design 的 Token 設計方法，分為三個層級：
+
+### 層級說明
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Reference Tokens (參照層)                                       │
+│  最基礎的原始值，如調色盤、字體家族、基礎間距等                      │
+│  例: --ref-palette-blue-500, --ref-font-family-sans              │
+├─────────────────────────────────────────────────────────────────┤
+│  System Tokens (系統層)                                          │
+│  語意化的設計決策，參照 Reference Tokens                           │
+│  例: --sys-color-primary, --sys-spacing-md, --sys-radius-sm      │
+├─────────────────────────────────────────────────────────────────┤
+│  Component Tokens (元件層)                                       │
+│  元件專屬的樣式變數，參照 System Tokens                            │
+│  例: --comp-button-bg, --comp-button-padding, --comp-card-radius │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 繼承關係範例
+
+```css
+/* Reference Tokens - 原始值 */
+--ref-palette-blue-500: #007bff;
+--ref-palette-gray-600: #6c757d;
+--ref-spacing-4: 8px;
+--ref-spacing-8: 16px;
+--ref-radius-1: 4px;
+
+/* System Tokens - 參照 Reference */
+--sys-color-primary: var(--ref-palette-blue-500);
+--sys-color-secondary: var(--ref-palette-gray-600);
+--sys-spacing-sm: var(--ref-spacing-4);
+--sys-spacing-md: var(--ref-spacing-8);
+--sys-radius-sm: var(--ref-radius-1);
+
+/* Component Tokens - 參照 System */
+--comp-button-bg-primary: var(--sys-color-primary);
+--comp-button-bg-secondary: var(--sys-color-secondary);
+--comp-button-padding-x: var(--sys-spacing-md);
+--comp-button-padding-y: var(--sys-spacing-sm);
+--comp-button-radius: var(--sys-radius-sm);
+```
+
+---
+
+## 2. 新元件開發流程
+
+開發任何新元件前，**必須依序執行以下步驟**：
+
+### Step 1: 確認共用 Tokens 檔案位置
+
+1. 列出 `storybook/src/` 目錄結構
+2. 找出存放共用 tokens 的檔案（可能是 `tokens.css`、`variables.css`、`styles/` 目錄等）
+3. 若找不到 tokens 檔案，**詢問開發者**：「目前沒有找到共用的 design tokens 檔案，是否要建立？建議的檔案結構如下...」
+
+### Step 2: 檢查元件所需的 Tokens
+
+1. 分析新元件需要哪些樣式變數（顏色、間距、圓角、字體等）
+2. 讀取共用 tokens 檔案
+3. 檢查是否已有對應的 Component Tokens
+
+### Step 3: 補充缺少的 Tokens
+
+若缺少必要的 tokens，**必須依序詢問開發者**：
+
+1. **Component Tokens 層**
+   - 「需要新增 `[元件名稱]` 的 Component Tokens，建議如下：
+     ```css
+     --comp-[component]-[property]: var(--sys-[token]);
+     ```
+     是否同意新增？」
+
+2. **System Tokens 層**（若 Component Token 參照的 System Token 不存在）
+   - 「Component Token 需要參照的 System Token `--sys-[name]` 不存在，是否要新增？」
+
+3. **Reference Tokens 層**（若 System Token 參照的 Reference Token 不存在）
+   - 「System Token 需要參照的 Reference Token `--ref-[name]` 不存在，是否要新增？」
+
+### Step 4: 更新 Tokens 檔案
+
+按照層級順序更新：
+1. 先新增 Reference Tokens（如有需要）
+2. 再新增 System Tokens（如有需要）
+3. 最後新增 Component Tokens
+
+### Step 5: 開發元件
+
+確認所有需要的 tokens 都已就緒後，才開始撰寫元件程式碼。
+
+---
+
+## 3. Tokens 命名規則
+
+### 命名前必做檢查
+
+**每次新增 token 前，必須先讀取現有 tokens 檔案**，分析現有的命名慣例，包括：
+- 前綴格式（`--ref-`、`--sys-`、`--comp-` 或其他）
+- 分隔符（`-` 或 `_` 或 camelCase）
+- 命名結構
+
+### 依照現有慣例命名
+
+若專案已有 tokens，**必須遵循現有的命名模式**，不要自創新風格。
+
+若專案尚無 tokens，建議採用以下命名慣例：
+
+| 層級 | 前綴 | 範例 |
+|------|------|------|
+| Reference | `--ref-` | `--ref-palette-blue-500`, `--ref-spacing-4` |
+| System | `--sys-` | `--sys-color-primary`, `--sys-spacing-md` |
+| Component | `--comp-` | `--comp-button-bg`, `--comp-card-padding` |
+
+---
+
+## 4. 元件開發規範
+
+### 目錄結構
+
+每個元件必須有獨立的資料夾：
+
+```
+storybook/src/components/
+└── [ComponentName]/
+    ├── [ComponentName].jsx         # 元件實作
+    ├── [ComponentName].stories.jsx # Storybook stories
+    └── [ComponentName].css         # 元件樣式（選用，使用 Component Tokens）
+```
+
+### 元件樣式規範
+
+1. **必須使用 Component Tokens**，不可寫死數值
+2. Component Tokens 必須參照 System Tokens
+3. 避免直接在元件中使用 Reference Tokens
+
+```jsx
+// ❌ 錯誤：寫死數值
+<button style={{ background: '#007bff', padding: '8px 16px' }}>
+
+// ❌ 錯誤：直接使用 Reference Token
+<button style={{ background: 'var(--ref-palette-blue-500)' }}>
+
+// ✅ 正確：使用 Component Token
+<button style={{ background: 'var(--comp-button-bg-primary)' }}>
+```
+
+### Stories 撰寫規範
+
+1. 每個元件必須有對應的 `.stories.jsx` 檔案
+2. 必須涵蓋元件的所有 variants 和主要 props
+3. 提供清楚的 story 名稱
+
+---
+
+## 5. 元件導出規範
+
+完成元件開發後，必須更新 `src/components/index.js`：
+
+```javascript
+export { ComponentName } from './ComponentName/ComponentName.jsx';
+```
+
+---
+
+## 6. 必要的互動確認清單
+
+以下情況**必須先詢問開發者**：
+
+| 情況 | 詢問範例 |
+|------|----------|
+| 找不到 tokens 檔案 | 「找不到共用 tokens 檔案，是否要建立？」 |
+| 需要新增 Component Token | 「需要新增 `--comp-[name]`，是否同意？」 |
+| 需要新增 System Token | 「Component Token 參照的 `--sys-[name]` 不存在，是否要新增？」 |
+| 需要新增 Reference Token | 「System Token 參照的 `--ref-[name]` 不存在，是否要新增？」 |
+| 元件 props 設計 | 「建議 `[元件]` 的 props 設計如下...是否同意？」 |
+| 修改現有 tokens | 「需要修改 `[token]`，這會影響使用此 token 的所有元件，是否同意？」 |
+
+---
+
+## 7. 開發檢查清單
+
+每次開發新元件前，執行以下檢查：
+
+- [ ] 已列出 `storybook/src/` 目錄，找出 tokens 檔案位置
+- [ ] 已讀取 tokens 檔案，確認現有的 token 層級結構
+- [ ] 已分析新元件需要的 tokens（Reference → System → Component）
+- [ ] 缺少的 tokens 已詢問開發者並獲得同意後新增
+- [ ] 元件使用 Component Tokens，未寫死任何數值
+- [ ] 已建立對應的 `.stories.jsx` 檔案
+- [ ] 已更新 `src/components/index.js` 導出新元件
+
+---
+
+## 重要提醒
+
+- **不要假設** tokens 檔案的位置或名稱，**每次都要檢查** 目錄結構
+- **不要假設** 現有的 token 命名慣例，**每次都要讀取** tokens 檔案確認
+- **嚴格遵守** Reference → System → Component 的層級繼承關係
+- **永遠詢問**開發者再做決定，不要自作主張新增或修改 tokens
+- 此專案為模板，每個使用者的 tokens 結構和命名慣例都會不同

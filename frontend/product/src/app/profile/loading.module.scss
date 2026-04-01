@@ -1,0 +1,49 @@
+@import '../../styles/variables';
+
+@keyframes shimmer {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.pulse {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: $border-radius-md;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.backgroundSkeleton {
+  position: absolute;
+  inset: 0;
+  background: #e0e0e0;
+  border-radius: $border-radius-xl;
+}
+
+.nameLine {
+  width: 160px;
+  height: $font-size-3xl;
+  border-radius: $border-radius-sm;
+}
+
+.bioLine {
+  width: 220px;
+  height: $font-size-lg;
+  border-radius: $border-radius-sm;
+}
+
+.linkButton {
+  width: $button-width-social;
+  height: $button-height-lg;
+  border-radius: $border-radius-xl;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+.likeButton {
+  width: 120px;
+  height: 44px;
+  border-radius: $border-radius-xl;
+}

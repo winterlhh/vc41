@@ -1,0 +1,18 @@
+{
+  "profile": {
+    "name": "Harry",
+    "bio": "Hi I'm Harry!",
+    "avatarSrc": "/avatar.png",
+    "avatarAlt": "Harry",
+    "backgroundSrc": "/profile-bg.jpg",
+    "backgroundAlt": "Background"
+  },
+  "socialLinks": [
+    { "platform": "instagram", "label": "Instagram", "href": "https://instagram.com" },
+    { "platform": "medium",    "label": "Medium",    "href": "https://medium.com"    },
+    { "platform": "linkedin",  "label": "Linkedin",  "href": "https://linkedin.com"  }
+  ],
+  "actions": {
+    "likeLabel": "Like"
+  }
+}

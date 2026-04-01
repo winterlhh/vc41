@@ -1,0 +1,4 @@
+{
+  "build_command": "npm install && npm run build --workspace=product",
+  "start_command": "npm run start --workspace=product"
+}

@@ -1,0 +1,253 @@
+# Frontend Development Rules - Shared Components & Design Tokens
+
+此規範適用於 `frontend/` 目錄下的所有開發工作。
+
+---
+
+## 核心原則
+
+在 `product/` 中開發任何 UI 功能時，必須遵守以下規範確保設計系統的一致性。
+
+---
+
+## 1. 共用元件優先原則
+
+### 開發前必做檢查
+
+在 `product/` 中需要使用 UI 元件時，**必須先檢查** `storybook/src/components/index.js` 查看目前可用的共用元件清單。
+
+```
+檢查路徑: frontend/storybook/src/components/index.js
+```
+
+### 元件使用流程
+
+1. **檢查元件是否存在**
+   - 讀取 `storybook/src/components/index.js` 查看已導出的元件
+   - 若元件存在，直接從 storybook 引用使用
+
+2. **元件不存在時的處理**
+   - **必須詢問開發者**：「在 storybook 中找不到 `[元件名稱]` 元件，是否要將此元件開發為共用元件並加入 storybook？」
+   - 等待開發者回覆後再進行下一步
+   - 若開發者同意 → 依照「新增共用元件流程」開發
+   - 若開發者拒絕 → 在 `product/` 中建立局部元件（非共用）
+
+---
+
+## 2. Design Tokens 優先原則
+
+### 開發前必做檢查
+
+在開發任何樣式相關功能時，**必須先檢查** 現有的 Design Tokens。
+
+```
+檢查路徑: frontend/product/src/styles/
+先列出此目錄下的檔案，找出存放 design tokens 的檔案（可能是 _variables.scss、tokens.css、variables.css 等）
+```
+
+### Design Tokens 使用流程
+
+1. **找出 Design Tokens 檔案**
+   - 先列出 `product/src/styles/` 目錄下的檔案
+   - 識別哪個檔案存放 design tokens（通常包含顏色、間距、字體大小等變數定義）
+   - 讀取該檔案查看現有變數
+
+2. **檢查 Token 是否存在**
+   - 優先使用現有的顏色、間距、字體大小等 tokens
+
+3. **需要新 Token 時的處理**
+   - **必須詢問開發者**：「目前 design tokens 中沒有 `[描述需求]`，是否要新增此 token 到 `[tokens 檔案名稱]`？」
+   - 確認 token 命名與現有命名慣例一致
+   - 先更新 tokens 檔案，再使用新 token 開發
+
+---
+
+## 3. 新增共用元件流程
+
+當開發者同意新增共用元件時，按以下順序執行：
+
+### Step 1: 檢查並更新 Design Tokens
+
+1. 分析新元件需要哪些樣式變數
+2. 列出 `product/src/styles/` 目錄，找出 design tokens 檔案
+3. 檢查該檔案是否已有對應 tokens
+4. 若缺少必要 tokens，**先詢問開發者**是否同意新增
+5. 更新 tokens 檔案加入新 tokens
+
+### Step 2: 建立元件目錄結構
+
+在 `storybook/src/components/` 下建立新元件：
+
+```
+storybook/src/components/
+└── [ComponentName]/
+    ├── [ComponentName].jsx    # 元件實作
+    └── [ComponentName].stories.jsx  # Storybook stories
+```
+
+### Step 3: 更新元件導出
+
+將新元件加入 `storybook/src/components/index.js`：
+
+```javascript
+export { ComponentName } from './ComponentName/ComponentName.jsx';
+```
+
+### Step 4: 在 Product 中使用
+
+完成上述步驟後，才能在 `product/` 中引用新元件。
+
+---
+
+## 4. 檔案結構參考
+
+### Storybook 共用元件庫
+
+```
+frontend/storybook/
+└── src/
+    └── components/
+        ├── index.js           # 統一導出所有元件
+        └── [Component]/
+            ├── [Component].jsx
+            └── [Component].stories.jsx
+```
+
+### Product 樣式系統
+
+```
+frontend/product/
+└── src/
+    └── styles/
+        ├── [tokens file]      # Design Tokens (檔名因專案而異，需先列出目錄確認)
+        └── ...                # 其他樣式檔案
+```
+
+> **注意**：Design tokens 的檔案名稱因專案而異，可能是 `_variables.scss`、`tokens.css`、`variables.css` 等。
+> 每次開發前需先列出 `product/src/styles/` 目錄確認實際檔案結構。
+
+---
+
+## 5. 必要的互動確認清單
+
+以下情況**必須先詢問開發者**，不可自行決定：
+
+| 情況 | 詢問範例 |
+|------|----------|
+| 需要的元件在 storybook 中不存在 | 「找不到 `Card` 元件，是否要建立為共用元件？」 |
+| 需要新增 design token | 「需要新增 `[token 名稱]` token 到 `[tokens 檔案]`，是否同意？」 |
+| 元件的 props 設計 | 「建議 `Button` 新增 `size` prop，設計如下...是否同意？」 |
+| 修改現有共用元件 | 「需要修改 `Button` 元件的樣式，這會影響所有使用處，是否同意？」 |
+
+---
+
+## 6. 命名慣例
+
+### Design Tokens 命名規則
+
+**必須參照現有 design tokens 檔案的命名模式**，不要自創新的命名風格。
+
+每次新增 token 前：
+1. 列出 `product/src/styles/` 目錄，找出 design tokens 檔案
+2. 讀取該檔案，分析現有變數的命名慣例（前綴、分隔符、大小寫等）
+3. 依照相同模式命名新 token
+4. 若不確定命名方式，**詢問開發者**確認
+
+> 例如：若現有顏色變數為 `$color-primary`，新增顏色時應使用 `$color-[name]` 格式；
+> 若現有變數為 `$primaryColor`，則應使用 `$[name]Color` 格式。
+
+### 元件命名規則
+
+- 使用 PascalCase 命名元件
+- 資料夾名稱與元件名稱相同
+- Stories 檔案命名: `[ComponentName].stories.jsx`
+
+---
+
+## 7. 開發檢查清單
+
+每次在 `product/` 開發 UI 功能前，執行以下檢查：
+
+- [ ] 已讀取 `storybook/src/components/index.js` 確認可用元件
+- [ ] 已列出 `product/src/styles/` 目錄，找出並讀取 design tokens 檔案確認可用 tokens
+- [ ] 需要的元件已存在，或已詢問開發者是否建立新元件
+- [ ] 需要的 tokens 已存在，或已詢問開發者是否新增
+- [ ] 新增的任何共用元件都有對應的 stories 檔案
+
+---
+
+## 重要提醒
+
+- **不要假設** storybook 中有哪些元件，**每次都要檢查** `index.js`
+- **不要假設** 有哪些 design tokens，**每次都要列出 `product/src/styles/` 目錄**，找出並讀取 tokens 檔案
+- **不要假設** design tokens 的檔案名稱，每個專案可能使用不同的命名
+- **永遠詢問**開發者再做決定，不要自作主張新增共用元件或 tokens
+- 此專案為模板，每個使用者的元件庫、tokens 和檔案命名都會不同
+
+---
+
+## Product 與 Storybook 元件協作規範
+
+### 8. 元件來源與導入規則
+
+- `product/` 開發時，**必須優先使用** `storybook/src/components/` 中的現有元件
+- 導入路徑使用**相對路徑**：
+  ```js
+  import { Button } from '../storybook/src/components/Button';
+  ```
+- **禁止**在 `product/` 中重複建立已存在於 `storybook/` 的元件
+
+---
+
+### 9. 元件分類標準
+
+**放入 Storybook 元件庫的條件（符合任一）：**
+
+- 可在多處重複使用的 UI 元件（如 Button、Card、Modal）
+- 純展示型元件，不包含業務邏輯
+- 需要維護設計一致性的元件
+- 可獨立運作，不依賴特定頁面 context
+
+**放入 Product 的條件（符合任一）：**
+
+- 僅在單一頁面使用的組合元件
+- 包含業務邏輯的容器元件（Container）
+- 頁面級元件（Page Components）
+- 高度客製化、不具通用性的元件
+
+---
+
+### 10. 新增元件流程（補充）
+
+當開發 Product 需要新元件時：
+
+1. 先檢查 `storybook/src/components/` 是否有可用元件
+2. 若無合適元件，**主動詢問**：「是否要在 Storybook 中新增 [元件名稱] 元件？」
+3. 說明判斷理由（為何建議放 Storybook 或 Product）
+4. 獲得確認後再進行開發
+
+---
+
+### 11. SCSS 樣式規範
+
+- 本專案使用 **SCSS + CSS Modules**（檔案命名：`*.module.scss`）
+- SCSS 中**必須使用 CSS Variables（Design Tokens）**，禁止寫死數值：
+
+  ```scss
+  // ❌ 錯誤：寫死數值
+  .button {
+    padding: 8px 16px;
+    background-color: #0070f3;
+  }
+
+  // ✅ 正確：使用 CSS Variables
+  .button {
+    padding: var(--abcd-comp-dimension-button-padding-y) var(--abcd-comp-dimension-button-padding-x);
+    background-color: var(--abcd-comp-color-button-default-bg);
+  }
+  ```
+
+- `product/` 必須引入 Storybook 的 tokens.css：
+  ```js
+  import '../storybook/src/styles/tokens.css';
+  ```
