@@ -9,6 +9,7 @@ RUN npm install
 
 COPY . .
 RUN npm run build
+RUN mkdir -p /app/public/uploads
 
 EXPOSE 1337
 
